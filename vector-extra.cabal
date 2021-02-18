@@ -1,0 +1,20 @@
+cabal-version:       >=1.10
+name:                vector-extra
+version:             0.1.0.0
+synopsis:
+description:
+
+license-file:        LICENSE
+author:              Alexey Khudyakov
+maintainer:          khudyakov@sepulcarium.org
+-- copyright:
+-- category:
+build-type:          Simple
+extra-source-files:  CHANGELOG.md
+
+library
+  build-depends:       base >=4.13 && <4.14
+                     , vector >= 0.13
+  default-language:    Haskell2010
+  Exposed-Modules:
+        Data.Vector.Extra.IxTransform
