@@ -1,7 +1,8 @@
-{-# LANGUAGE DerivingStrategies    #-}
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE FlexibleInstances          #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE TypeFamilies               #-}
 -- |
 module Data.Vector.Extra.IxTransform
   ( -- * Reversed vectors
@@ -10,6 +11,7 @@ module Data.Vector.Extra.IxTransform
   , reversing
   ) where
 
+import Control.Monad.Fix
 import Data.Coerce
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Generic.Mutable as M
@@ -20,7 +22,9 @@ import qualified Data.Vector.Generic.Mutable as M
 
 -- | Newtype wrapper for vectors that looks on vector below in
 --   reverse.
-newtype Reversed  v a = Reversed (v a)
+newtype Reversed v a = Reversed (v a)
+  -- deriving newtype (Functor,Applicative,Monad,MonadFail,MonadFix)
+  -- deriving stock   (Foldable,Traversable)
 
 -- | Mutable reversed vector
 newtype MReversed v s a = MReversed (v s a)
@@ -29,6 +33,12 @@ type instance G.Mutable (Reversed v) = MReversed (G.Mutable v)
 
 instance (Show a, G.Vector v a) => Show (Reversed v a) where
   showsPrec = G.showsPrec
+instance (Eq a, G.Vector v a) => Eq (Reversed v a) where
+  (==) = G.eq
+  {-# INLINE (==) #-}
+instance (Ord a, G.Vector v a) => Ord (Reversed v a) where
+  compare = G.cmp
+  {-# INLINE compare #-}
 
 
 instance M.MVector v a => M.MVector (MReversed v) a where
