@@ -1,14 +1,18 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ScopedTypeVariables   #-}
+{-# LANGUAGE TypeApplications      #-}
 {-# LANGUAGE TypeFamilies          #-}
 -- |
 -- Add different representations for unboxed vectors.
 module Data.Vector.Extra.Unbox where
 
 import Data.Coerce
-import qualified Data.Vector.Primitive       as P
-import qualified Data.Vector.Unboxed         as U
-import qualified Data.Vector.Generic         as G
-import qualified Data.Vector.Generic.Mutable as M
+import qualified Data.Vector                   as V
+import qualified Data.Vector.Primitive         as VP
+import qualified Data.Vector.Primitive.Mutable as VPM
+import qualified Data.Vector.Unboxed           as U
+import qualified Data.Vector.Generic           as G
+import qualified Data.Vector.Generic.Mutable   as M
 
 ----------------------------------------------------------------
 -- Primitive representation
@@ -18,23 +22,23 @@ import qualified Data.Vector.Generic.Mutable as M
 --   from vector in order to play with it
 newtype UnboxViaPrim a = UnboxViaPrim a
 
-newtype instance U.MVector s (UnboxViaPrim a) = MV_UnboxViaPrim (P.MVector s a)
-newtype instance U.Vector    (UnboxViaPrim a) = V_UnboxViaPrim (P.Vector a)
+newtype instance U.MVector s (UnboxViaPrim a) = MV_UnboxViaPrim (VP.MVector s a)
+newtype instance U.Vector    (UnboxViaPrim a) = V_UnboxViaPrim (VP.Vector a)
 
-instance P.Prim a => M.MVector U.MVector (UnboxViaPrim a) where
-  basicLength (MV_UnboxViaPrim v) = M.basicLength v
-  basicUnsafeSlice i n (MV_UnboxViaPrim v) = MV_UnboxViaPrim $ M.basicUnsafeSlice i n v
-  basicOverlaps (MV_UnboxViaPrim v1) (MV_UnboxViaPrim v2) = M.basicOverlaps v1 v2
-  basicUnsafeNew n = MV_UnboxViaPrim <$> M.basicUnsafeNew n
-  basicInitialize (MV_UnboxViaPrim v) = M.basicInitialize v
-  basicUnsafeReplicate n (UnboxViaPrim x) = MV_UnboxViaPrim <$> M.basicUnsafeReplicate n x
-  basicUnsafeRead (MV_UnboxViaPrim v) i = UnboxViaPrim <$> M.basicUnsafeRead v i
-  basicUnsafeWrite (MV_UnboxViaPrim v) i (UnboxViaPrim x) = M.basicUnsafeWrite v i x
-  basicClear (MV_UnboxViaPrim v) = M.basicClear v
-  basicSet (MV_UnboxViaPrim v) (UnboxViaPrim x) = M.basicSet v x
-  basicUnsafeCopy (MV_UnboxViaPrim v1) (MV_UnboxViaPrim v2) = M.basicUnsafeCopy v1 v2
-  basicUnsafeMove (MV_UnboxViaPrim v1) (MV_UnboxViaPrim v2) = M.basicUnsafeMove v1 v2
-  basicUnsafeGrow (MV_UnboxViaPrim v) n = MV_UnboxViaPrim <$> M.basicUnsafeGrow v n
+instance VP.Prim a => M.MVector U.MVector (UnboxViaPrim a) where
+  basicLength          = coerce $ M.basicLength          @VPM.MVector @a
+  basicUnsafeSlice     = coerce $ M.basicUnsafeSlice     @VPM.MVector @a
+  basicOverlaps        = coerce $ M.basicOverlaps        @VPM.MVector @a
+  basicUnsafeNew       = coerce $ M.basicUnsafeNew       @VPM.MVector @a
+  basicInitialize      = coerce $ M.basicInitialize      @VPM.MVector @a
+  basicUnsafeReplicate = coerce $ M.basicUnsafeReplicate @VPM.MVector @a
+  basicUnsafeRead      = coerce $ M.basicUnsafeRead      @VPM.MVector @a
+  basicUnsafeWrite     = coerce $ M.basicUnsafeWrite     @VPM.MVector @a
+  basicClear           = coerce $ M.basicClear           @VPM.MVector @a
+  basicSet             = coerce $ M.basicSet             @VPM.MVector @a
+  basicUnsafeCopy      = coerce $ M.basicUnsafeCopy      @VPM.MVector @a
+  basicUnsafeMove      = coerce $ M.basicUnsafeMove      @VPM.MVector @a
+  basicUnsafeGrow      = coerce $ M.basicUnsafeGrow      @VPM.MVector @a
   {-# INLINE basicLength          #-}
   {-# INLINE basicUnsafeSlice     #-}
   {-# INLINE basicOverlaps        #-}
@@ -48,13 +52,13 @@ instance P.Prim a => M.MVector U.MVector (UnboxViaPrim a) where
   {-# INLINE basicUnsafeCopy      #-}
   {-# INLINE basicUnsafeGrow      #-}
 
-instance P.Prim a => G.Vector U.Vector (UnboxViaPrim a) where
-  basicUnsafeFreeze (MV_UnboxViaPrim v) = V_UnboxViaPrim <$> G.basicUnsafeFreeze v
-  basicUnsafeThaw (V_UnboxViaPrim v) = MV_UnboxViaPrim <$> G.basicUnsafeThaw v
-  basicLength (V_UnboxViaPrim v) = G.basicLength v
-  basicUnsafeSlice i n (V_UnboxViaPrim v) = V_UnboxViaPrim $ G.basicUnsafeSlice i n v
-  basicUnsafeIndexM (V_UnboxViaPrim v) i = UnboxViaPrim <$> G.basicUnsafeIndexM v i
-  basicUnsafeCopy (MV_UnboxViaPrim mv) (V_UnboxViaPrim v) = G.basicUnsafeCopy mv v
+instance VP.Prim a => G.Vector U.Vector (UnboxViaPrim a) where
+  basicUnsafeFreeze = coerce $ G.basicUnsafeFreeze @VP.Vector @a
+  basicUnsafeThaw   = coerce $ G.basicUnsafeThaw   @VP.Vector @a
+  basicLength       = coerce $ G.basicLength       @VP.Vector @a
+  basicUnsafeSlice  = coerce $ G.basicUnsafeSlice  @VP.Vector @a
+  basicUnsafeIndexM = coerce $ G.basicUnsafeIndexM @VP.Vector @a
+  basicUnsafeCopy   = coerce $ G.basicUnsafeCopy   @VP.Vector @a
   elemseq _ = seq
   {-# INLINE basicUnsafeFreeze #-}
   {-# INLINE basicUnsafeThaw   #-}
