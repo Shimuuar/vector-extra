@@ -1,0 +1,3 @@
+packages:
+        vector-extra.cabal
+        ../vector/*cabal
