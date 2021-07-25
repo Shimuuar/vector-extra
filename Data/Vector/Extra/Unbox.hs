@@ -35,18 +35,18 @@ instance P.Prim a => M.MVector U.MVector (UnboxViaPrim a) where
   basicUnsafeCopy (MV_UnboxViaPrim v1) (MV_UnboxViaPrim v2) = M.basicUnsafeCopy v1 v2
   basicUnsafeMove (MV_UnboxViaPrim v1) (MV_UnboxViaPrim v2) = M.basicUnsafeMove v1 v2
   basicUnsafeGrow (MV_UnboxViaPrim v) n = MV_UnboxViaPrim <$> M.basicUnsafeGrow v n
-  {-# INLINE basicLength #-}
-  {-# INLINE basicUnsafeSlice #-}
-  {-# INLINE basicOverlaps #-}
-  {-# INLINE basicUnsafeNew #-}
-  {-# INLINE basicInitialize #-}
+  {-# INLINE basicLength          #-}
+  {-# INLINE basicUnsafeSlice     #-}
+  {-# INLINE basicOverlaps        #-}
+  {-# INLINE basicUnsafeNew       #-}
+  {-# INLINE basicInitialize      #-}
   {-# INLINE basicUnsafeReplicate #-}
-  {-# INLINE basicUnsafeRead #-}
-  {-# INLINE basicUnsafeWrite #-}
-  {-# INLINE basicClear #-}
-  {-# INLINE basicSet #-}
-  {-# INLINE basicUnsafeCopy #-}
-  {-# INLINE basicUnsafeGrow #-}
+  {-# INLINE basicUnsafeRead      #-}
+  {-# INLINE basicUnsafeWrite     #-}
+  {-# INLINE basicClear           #-}
+  {-# INLINE basicSet             #-}
+  {-# INLINE basicUnsafeCopy      #-}
+  {-# INLINE basicUnsafeGrow      #-}
 
 instance P.Prim a => G.Vector U.Vector (UnboxViaPrim a) where
   basicUnsafeFreeze (MV_UnboxViaPrim v) = V_UnboxViaPrim <$> G.basicUnsafeFreeze v
@@ -57,9 +57,9 @@ instance P.Prim a => G.Vector U.Vector (UnboxViaPrim a) where
   basicUnsafeCopy (MV_UnboxViaPrim mv) (V_UnboxViaPrim v) = G.basicUnsafeCopy mv v
   elemseq _ = seq
   {-# INLINE basicUnsafeFreeze #-}
-  {-# INLINE basicUnsafeThaw #-}
-  {-# INLINE basicLength #-}
-  {-# INLINE basicUnsafeSlice #-}
+  {-# INLINE basicUnsafeThaw   #-}
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeSlice  #-}
   {-# INLINE basicUnsafeIndexM #-}
-  {-# INLINE elemseq #-}
+  {-# INLINE elemseq           #-}
 
