@@ -2,6 +2,8 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE TypeApplications           #-}
 {-# LANGUAGE TypeFamilies               #-}
 -- |
 module Data.Vector.Extra.IxTransform
@@ -54,13 +56,14 @@ instance M.MVector v a => M.MVector (MReversed v) a where
   {-# INLINE basicUnsafeReplicate #-}
   basicClear (MReversed v) = M.basicClear v  -- COERCE
   {-# INLINE basicClear #-}
-  basicUnsafeGrow (MReversed v) i = MReversed <$> M.basicUnsafeGrow v i -- COERCE
-  {-# INLINE basicUnsafeGrow #-}
   -- FIXME: Is this correct?
   basicUnsafeCopy (MReversed v) (MReversed u) = M.basicUnsafeCopy v u
   {-# INLINE basicUnsafeCopy #-}
   basicUnsafeMove (MReversed v) (MReversed u) = M.basicUnsafeMove v u
   {-# INLINE basicUnsafeMove #-}
+  -- FIXME: wrong direction
+  basicUnsafeGrow (MReversed v) i = MReversed <$> M.basicUnsafeGrow v i -- COERCE
+  {-# INLINE basicUnsafeGrow #-}
   -- Index manipulations
   basicUnsafeRead (MReversed v) i = M.basicUnsafeRead v (M.basicLength v - i - 1)
   {-# INLINE basicUnsafeRead #-}
