@@ -14,7 +14,7 @@ module Data.Vector.Extra.IxTransform
   , reversing
   ) where
 
-import Control.Monad.Fix
+-- import Control.Monad.Fix
 import Data.Coerce
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Generic.Mutable as M
@@ -75,19 +75,21 @@ instance M.MVector v a => M.MVector (MReversed v) a where
   {-# INLINE basicUnsafeSlice #-}
 
 instance G.Vector v a => G.Vector (Reversed v) a where
-  basicUnsafeFreeze (MReversed v) = Reversed <$> G.basicUnsafeFreeze v
+  basicLength       = coerce $ G.basicLength       @v @a
+  basicUnsafeCopy   = coerce $ G.basicUnsafeCopy   @v @a
+  basicUnsafeThaw   = coerce $ G.basicUnsafeThaw   @v @a
+  basicUnsafeFreeze = coerce $ G.basicUnsafeFreeze @v @a
+  {-# INLINE basicLength       #-}
+  {-# INLINE basicUnsafeCopy   #-}
   {-# INLINE basicUnsafeFreeze #-}
-  basicUnsafeThaw (Reversed v) = MReversed <$> G.basicUnsafeThaw v
-  {-# INLINE basicUnsafeThaw #-}
-  basicLength (Reversed v) = G.basicLength v
-  {-# INLINE basicLength #-}
-  basicUnsafeCopy (MReversed v) (Reversed u) = G.basicUnsafeCopy v u
-  {-# INLINE basicUnsafeCopy #-}
+  {-# INLINE basicUnsafeThaw   #-}
   -- Index manipulations
-  basicUnsafeSlice i k (Reversed v) = Reversed $ G.basicUnsafeSlice (n - i - k) k v
+  basicUnsafeSlice i k (Reversed v)
+    = Reversed $ G.basicUnsafeSlice (n - i - k) k v
     where n = G.basicLength v
   {-# INLINE basicUnsafeSlice #-}
-  basicUnsafeIndexM (Reversed v) i = G.basicUnsafeIndexM v (G.basicLength v - i - 1)
+  basicUnsafeIndexM (Reversed v) i
+    = G.basicUnsafeIndexM v (G.basicLength v - i - 1)
   {-# INLINE basicUnsafeIndexM #-}
 
 reversing :: (Reversed v a -> Reversed v b) -> v a -> v b
