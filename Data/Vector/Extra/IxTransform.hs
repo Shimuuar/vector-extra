@@ -15,7 +15,7 @@ module Data.Vector.Extra.IxTransform
   , reversing
   ) where
 
--- import Control.Monad.Fix
+import Control.Monad.ST
 import Data.Coerce
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Generic.Mutable as M
@@ -56,17 +56,16 @@ instance M.MVector v a => M.MVector (MReversed v) a where
   basicInitialize      = coerce $ M.basicInitialize      @v @a
   basicUnsafeReplicate = coerce $ M.basicUnsafeReplicate @v @a
   basicClear           = coerce $ M.basicClear           @v @a
+  basicUnsafeCopy      = coerce $ M.basicUnsafeCopy      @v @a
+  basicUnsafeMove      = coerce $ M.basicUnsafeMove      @v @a
   {-# INLINE basicUnsafeNew       #-}
   {-# INLINE basicInitialize      #-}
   {-# INLINE basicUnsafeReplicate #-}
   {-# INLINE basicClear           #-}
-  -- FIXME: Is this correct?
-  basicUnsafeCopy = coerce $ M.basicUnsafeCopy @v @a
-  basicUnsafeMove = coerce $ M.basicUnsafeMove @v @a
-  {-# INLINE basicUnsafeCopy #-}
-  {-# INLINE basicUnsafeMove #-}
-  -- FIXME: wrong direction
-  basicUnsafeGrow (MReversed v) i = MReversed <$> M.basicUnsafeGrow v i
+  {-# INLINE basicUnsafeCopy      #-}
+  {-# INLINE basicUnsafeMove      #-}
+  basicUnsafeGrow :: forall s. MReversed v s a -> Int -> ST s (MReversed v s a)
+  basicUnsafeGrow = coerce $ M.unsafeGrowFront @(ST s) @v @a
   {-# INLINE basicUnsafeGrow #-}
   -- Index manipulations
   basicUnsafeRead (MReversed v) i = M.basicUnsafeRead v (M.basicLength v - i - 1)
