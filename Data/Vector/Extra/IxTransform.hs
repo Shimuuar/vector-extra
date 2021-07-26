@@ -19,6 +19,7 @@ module Data.Vector.Extra.IxTransform
   ) where
 
 import Control.Monad.ST
+import Control.Monad.Fix
 import Data.Coerce
 import qualified Data.Vector.Generic         as G
 import qualified Data.Vector.Generic.Mutable as M
@@ -30,8 +31,8 @@ import qualified Data.Vector.Generic.Mutable as M
 -- | Newtype wrapper for vectors that looks on vector below in
 --   reverse.
 newtype Reversed v a = Reversed (v a)
-  deriving stock (Functor, Foldable, Traversable)
-  -- deriving newtype (Functor,Applicative,Monad,MonadFail,MonadFix)
+  deriving stock   (Functor, Foldable, Traversable)
+  deriving newtype (Applicative, Monad, MonadFail, MonadFix)
 
 
 -- | Mutable reversed vector
