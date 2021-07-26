@@ -29,6 +29,8 @@ newtype UnboxViaPrim a = UnboxViaPrim a
 newtype instance U.MVector s (UnboxViaPrim a) = MV_UnboxViaPrim (VP.MVector s a)
 newtype instance U.Vector    (UnboxViaPrim a) = V_UnboxViaPrim (VP.Vector a)
 
+instance VP.Prim a =>U.Unbox (UnboxViaPrim a)
+
 instance VP.Prim a => M.MVector U.MVector (UnboxViaPrim a) where
   basicLength          = coerce $ M.basicLength          @VP.MVector @a
   basicUnsafeSlice     = coerce $ M.basicUnsafeSlice     @VP.MVector @a
@@ -85,6 +87,8 @@ newtype UnboxViaBoxed a = UnboxViaBoxed a
 
 newtype instance U.MVector s (UnboxViaBoxed a) = MV_UnboxViaBoxed (V.MVector s a)
 newtype instance U.Vector    (UnboxViaBoxed a) = V_UnboxViaBoxed  (V.Vector a)
+
+instance U.Unbox (UnboxViaBoxed a)
 
 instance M.MVector U.MVector (UnboxViaBoxed a) where
   basicLength          = coerce $ M.basicLength          @V.MVector @a
