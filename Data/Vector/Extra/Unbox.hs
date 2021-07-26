@@ -1,7 +1,10 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-{-# LANGUAGE TypeApplications      #-}
-{-# LANGUAGE TypeFamilies          #-}
+{-# LANGUAGE DerivingStrategies         #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE ScopedTypeVariables        #-}
+{-# LANGUAGE StandaloneDeriving         #-}
+{-# LANGUAGE TypeApplications           #-}
+{-# LANGUAGE TypeFamilies               #-}
 -- |
 -- Add different representations for unboxed vectors.
 module Data.Vector.Extra.Unbox where
@@ -83,7 +86,7 @@ newtype UnboxViaBoxed a = UnboxViaBoxed a
 newtype instance U.MVector s (UnboxViaBoxed a) = MV_UnboxViaBoxed (V.MVector s a)
 newtype instance U.Vector    (UnboxViaBoxed a) = V_UnboxViaBoxed  (V.Vector a)
 
-instance VP.Prim a => M.MVector U.MVector (UnboxViaBoxed a) where
+instance M.MVector U.MVector (UnboxViaBoxed a) where
   basicLength          = coerce $ M.basicLength          @V.MVector @a
   basicUnsafeSlice     = coerce $ M.basicUnsafeSlice     @V.MVector @a
   basicOverlaps        = coerce $ M.basicOverlaps        @V.MVector @a
@@ -110,7 +113,8 @@ instance VP.Prim a => M.MVector U.MVector (UnboxViaBoxed a) where
   {-# INLINE basicUnsafeCopy      #-}
   {-# INLINE basicUnsafeGrow      #-}
 
-instance VP.Prim a => G.Vector U.Vector (UnboxViaBoxed a) where
+
+instance G.Vector U.Vector (UnboxViaBoxed a) where
   basicUnsafeFreeze = coerce $ G.basicUnsafeFreeze @V.Vector @a
   basicUnsafeThaw   = coerce $ G.basicUnsafeThaw   @V.Vector @a
   basicLength       = coerce $ G.basicLength       @V.Vector @a
