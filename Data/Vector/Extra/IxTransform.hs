@@ -1,6 +1,7 @@
 {-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs               #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE TypeApplications           #-}
@@ -45,25 +46,27 @@ instance (Ord a, G.Vector v a) => Ord (Reversed v a) where
 
 
 instance M.MVector v a => M.MVector (MReversed v) a where
-  basicLength (MReversed v) = M.basicLength v -- COERCE
+  basicLength :: forall s. MReversed v s a -> Int
+  basicLength = coerce $ M.basicLength @v @a @s
   {-# INLINE basicLength #-}
-  basicOverlaps (MReversed v) (MReversed u) = M.basicOverlaps v u -- COERCE
+  basicOverlaps :: forall s. MReversed v s a -> MReversed v s a -> Bool
+  basicOverlaps = coerce $ M.basicOverlaps @v @a @s
   {-# INLINE basicOverlaps #-}
-  basicUnsafeNew n = MReversed <$> M.basicUnsafeNew n -- COERCE
-  {-# INLINE basicUnsafeNew #-}
-  basicInitialize (MReversed v) = M.basicInitialize v -- COERCE
-  {-# INLINE basicInitialize #-}
-  basicUnsafeReplicate i a = MReversed <$> M.basicUnsafeReplicate i a -- COERCE
+  basicUnsafeNew       = coerce $ M.basicUnsafeNew       @v @a
+  basicInitialize      = coerce $ M.basicInitialize      @v @a
+  basicUnsafeReplicate = coerce $ M.basicUnsafeReplicate @v @a
+  basicClear           = coerce $ M.basicClear           @v @a
+  {-# INLINE basicUnsafeNew       #-}
+  {-# INLINE basicInitialize      #-}
   {-# INLINE basicUnsafeReplicate #-}
-  basicClear (MReversed v) = M.basicClear v  -- COERCE
-  {-# INLINE basicClear #-}
+  {-# INLINE basicClear           #-}
   -- FIXME: Is this correct?
-  basicUnsafeCopy (MReversed v) (MReversed u) = M.basicUnsafeCopy v u
+  basicUnsafeCopy = coerce $ M.basicUnsafeCopy @v @a
+  basicUnsafeMove = coerce $ M.basicUnsafeMove @v @a
   {-# INLINE basicUnsafeCopy #-}
-  basicUnsafeMove (MReversed v) (MReversed u) = M.basicUnsafeMove v u
   {-# INLINE basicUnsafeMove #-}
   -- FIXME: wrong direction
-  basicUnsafeGrow (MReversed v) i = MReversed <$> M.basicUnsafeGrow v i -- COERCE
+  basicUnsafeGrow (MReversed v) i = MReversed <$> M.basicUnsafeGrow v i
   {-# INLINE basicUnsafeGrow #-}
   -- Index manipulations
   basicUnsafeRead (MReversed v) i = M.basicUnsafeRead v (M.basicLength v - i - 1)
