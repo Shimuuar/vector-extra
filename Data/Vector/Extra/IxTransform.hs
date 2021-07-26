@@ -1,3 +1,6 @@
+{-# LANGUAGE DeriveFoldable             #-}
+{-# LANGUAGE DeriveFunctor              #-}
+{-# LANGUAGE DeriveTraversable          #-}
 {-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
@@ -27,8 +30,9 @@ import qualified Data.Vector.Generic.Mutable as M
 -- | Newtype wrapper for vectors that looks on vector below in
 --   reverse.
 newtype Reversed v a = Reversed (v a)
+  deriving stock (Functor, Foldable, Traversable)
   -- deriving newtype (Functor,Applicative,Monad,MonadFail,MonadFix)
-  -- deriving stock   (Foldable,Traversable)
+
 
 -- | Mutable reversed vector
 newtype MReversed v s a = MReversed (v s a)
