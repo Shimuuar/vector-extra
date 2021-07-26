@@ -116,6 +116,7 @@ instance M.MVector U.MVector (UnboxViaBoxed a) where
   {-# INLINE basicClear           #-}
   {-# INLINE basicSet             #-}
   {-# INLINE basicUnsafeCopy      #-}
+  {-# INLINE basicUnsafeMove      #-}
   {-# INLINE basicUnsafeGrow      #-}
 
 
