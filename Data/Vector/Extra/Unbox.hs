@@ -1,5 +1,6 @@
 {-# LANGUAGE DerivingStrategies         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs               #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
 {-# LANGUAGE ScopedTypeVariables        #-}
 {-# LANGUAGE StandaloneDeriving         #-}
@@ -125,7 +126,8 @@ instance G.Vector U.Vector (UnboxViaBoxed a) where
   basicUnsafeSlice  = coerce $ G.basicUnsafeSlice  @V.Vector @a
   basicUnsafeIndexM = coerce $ G.basicUnsafeIndexM @V.Vector @a
   basicUnsafeCopy   = coerce $ G.basicUnsafeCopy   @V.Vector @a
-  elemseq _ = seq
+  elemseq :: forall b. U.Vector (UnboxViaBoxed a) -> (UnboxViaBoxed a) -> b -> b
+  elemseq = coerce $ G.elemseq @V.Vector @a @b
   {-# INLINE basicUnsafeFreeze #-}
   {-# INLINE basicUnsafeThaw   #-}
   {-# INLINE basicLength       #-}
