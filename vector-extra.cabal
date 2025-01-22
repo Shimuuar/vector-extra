@@ -20,4 +20,4 @@ library
   Exposed-Modules:
         Data.Vector.Extra.IxTransform
         Data.Vector.Extra.Nubox
-        Data.Vector.Extra.Unbox
+
